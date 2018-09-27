@@ -1,0 +1,17 @@
+environments/common/settings.*.php
+environments/ci/settings.*.php
+environments/dev/settings.*.php
+environments/local/settings.*.php
+environments/local/*/settings.*.php
+environments/prod/settings.*.php
+environments/stage/settings.*.php
+
+# Managed by Composer
+/vendor/
+
+# Composer PHAR
+/composer.phar
+
+# Build
+/build/
+.idea
