@@ -4,7 +4,7 @@
 
 ## About
 
-This project is intended to aid in loading of various PHP settings files based on hosting platforms, CI platforms, and environment types. It allows a structure so that individual settings files can be placed in proper folders depending on a project's needs.
+This project is intended to aid in loading of various PHP settings files based on hosting platforms, CI platforms, and environment types. The environment variables for the hosting/CI platform and environment will accessible via shell and in PHP (using `getenv()`). It allows a folder structure so that individual settings files can be placed in proper folders depending on a project's needs.
 
 **Project File Structure**
 * `bin/` - Contains files to be used by shell scripts for environment variables
