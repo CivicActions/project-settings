@@ -20,7 +20,7 @@ This project is intended to aid in loading of various PHP settings files based o
 
 * Install via `composer require kducharm/project_settings`.
 * Copy the `environments` folder to a location in your project outside of the web root.
-* Either set environment variable `PROJECT_SETTINGS_ENV_FOLDER=/path/to/environments/`
+* Either set environment variable `PROJECT_SETTINGS_ENV_FOLDER=/path/to/environments/` or pass path into ProjectSettings().
 * Add the following PHP code to your bootstrap:
 ``` php
 $project_settings = new Kducharm\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
