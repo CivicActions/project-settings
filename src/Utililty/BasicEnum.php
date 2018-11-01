@@ -41,7 +41,7 @@ abstract class BasicEnum
      * @return array
      *   Array of constants
      */
-    private static function getConstants()
+    public static function getConstants()
     {
         if (self::$constCacheArray == null) {
             self::$constCacheArray = [];
