@@ -348,8 +348,8 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     public function setEnvVariables()
     {
-        putenv(self::PROJECT_HOSTING_PLATFORM_ENV_OVERRIDE . "='{$this->getHostingPlatform()}'");
-        putenv(self::PROJECT_CI_PLATFORM_ENV_OVERRIDE . "='{$this->getCIPlatform()}'");
-        putenv(self::PROJECT_ENVIRONMENT_TYPE_ENV_OVERRIDE . "='{$this->getEnvironmentType()}'");
+        putenv(self::PROJECT_HOSTING_PLATFORM_ENV_OVERRIDE . "={$this->getHostingPlatform()}");
+        putenv(self::PROJECT_CI_PLATFORM_ENV_OVERRIDE . "={$this->getCIPlatform()}");
+        putenv(self::PROJECT_ENVIRONMENT_TYPE_ENV_OVERRIDE . "={$this->getEnvironmentType()}");
     }
 }
