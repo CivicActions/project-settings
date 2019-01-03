@@ -9,8 +9,12 @@ branches:
 matrix:
   fast_finish: true
   include:
+    - php: 7.3
+      env: 'SCENARIO=symfony4 HIGHEST_LOWEST="update"'
     - php: 7.2
       env: 'SCENARIO=symfony4 HIGHEST_LOWEST="update"'
+    - php: 7.2
+      env: 'SCENARIO=symfony4'
     - php: 7.1
       env: 'SCENARIO=symfony4'
     - php: 7.0.11

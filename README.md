@@ -14,9 +14,9 @@ This project is intended to aid in loading of various PHP settings files based o
 * `environments/common/PLATFORM` - Settings files for specific platform
 * `environments/ENVIRONMENT` - Settings files for specific environment
 * `environments/ENVIRONMENT/PLATFORM` - Settings files for specific environment and specific platform
+* `environments/secrets` - Classes to include for Secrets Management, such as `SampleSecretsManager.php`
 
 ## Usage
-
 
 * Install via `composer require kducharm/project_settings`.
 * Copy the `environments` folder to a location in your project outside of the web root.
@@ -37,7 +37,7 @@ Their available values are set in `src/ProjectSettingsConstants.php`:
 * `PROJECT_SERVER_ENVIRONMENT` - Server environment such as `local`, `dev`, `stage`, or `prod`
 
 These environment variables can be set in your CI pipelines, docker configuration files, or other location prior to including the following script:
-`. bin/init_project_settings.sh`
+`eval $($APP_ROOT/vendor/kducharm/project_settings/bin/init_project_settings)`
 
 Once executed, the hosting/server environment will attempt to be automatically detected (Acquia/Pantheon). 
 The CI platform will also attempted to be automatically detected, but may need manual override in cases like containerization where the platform's environment variables may not persist.
@@ -52,5 +52,27 @@ Examples may include:
 
 `environments/ci/probo/settings.files.php` and `environments/ci/travis/settings.files.php` to set different file locations for TravisCI and Probo.
 
-### Loading Settings Files
-Include `settings.project.php` in your project to load all discovered settings files based on the environment/hosting platform.
+### Secrets Management
+An abstract class is provided to aid in retrieval of secrets `src/SecretsManager.php`. A sample implementation is at `environments/secrets/SampleSecretsManager.php`.
+
+To utilize the secrets management functionality, the class should be extended to define the `$project_prefix` string and `$secrets_definitions` array with a project name and a list of secrets that are available.
+
+The default implementation of `getSecret` checks the PHP environment variables available using `getenv()` which would require setting php `variables_order` to include `E` in `php.ini`.
+You may extend the `getSecret` function to override its behavior on how to retrieve a secret.
+
+To retrieve a secret in a PHP file:
+```
+$project_settings = new Kducharm\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
+$secrets_manager = new Kducharm\ProjectSettings\SampleSecretsManager($project_settings);
+$secret = $secrets_manager->getSecret('SECRET_NAME');
+```
+
+`getSecret()` will perform a lookup of the variable name passed in again an environment-specific variable, then non-specific variable if not found. For example when on dev environment with class `$project_prefix` set to `PROJECT_NAME`:
+```
+$secret = $secrets_manager->getSecret('SECRET_NAME');
+```
+will look for the environment variables in this order:
+```
+PROJECT_NAME_DEV_SECRET_NAME
+PROJECT_NAME_SECRET_NAME
+```

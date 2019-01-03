@@ -37,7 +37,7 @@ class ProjectSettings implements ProjectSettingsInterface
     {
         if (!empty($settings_dir)) {
             $this->settings_root_dir = rtrim($settings_dir, '/');
-        } if ($settings_dir = rtrim(getenv(self::PROJECT_SETTINGS_ENV_FOLDER_OVERRIDE))) {
+        } elseif ($settings_dir = rtrim(getenv(self::PROJECT_SETTINGS_ENV_FOLDER_OVERRIDE))) {
             $this->settings_root_dir = rtrim($settings_dir, '/');
         } else {
             $this->settings_root_dir = dirname(__FILE__);
@@ -302,6 +302,14 @@ class ProjectSettings implements ProjectSettingsInterface
                         $this->addSettingsFiles($project_settings_file);
                     }
                 }
+            }
+        }
+
+        // Add SecretsManager Class Overrides
+        $settings_file_pattern = $this->settings_root_dir . "/secrets/*.php";
+        if ($project_settings_files = glob($settings_file_pattern)) {
+            foreach ($project_settings_files as $project_settings_file) {
+                require_once($project_settings_file);
             }
         }
     }
