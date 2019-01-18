@@ -5,6 +5,7 @@ environments/local/settings.*.php
 environments/local/*/settings.*.php
 environments/prod/settings.*.php
 environments/stage/settings.*.php
+environments/qa/settings.*.php
 
 # Managed by Composer
 /vendor/

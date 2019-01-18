@@ -34,7 +34,7 @@ The following environment variables allow for overriding the hosting platform, C
 Their available values are set in `src/ProjectSettingsConstants.php`:
 * `PROJECT_HOSTING_PLATFORM` - Hosting platform such as `acquia`, `docker`, `aws`, `pantheon`
 * `PROJECT_CI_PLATFORM` - CI platforms such as `gitlab`, `probo`, `travis`, `tugboat`, `pipelines`
-* `PROJECT_SERVER_ENVIRONMENT` - Server environment such as `local`, `dev`, `stage`, or `prod`
+* `PROJECT_SERVER_ENVIRONMENT` - Server environment such as `local`, `qa`, `dev`, `stage` or `prod`
 
 These environment variables can be set in your CI pipelines, docker configuration files, or other location prior to including the following script:
 `eval $($APP_ROOT/vendor/kducharm/project_settings/bin/init_project_settings)`
