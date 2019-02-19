@@ -106,6 +106,12 @@ abstract class SecretsManager
                 $valid_secret_names[] = $this->getProjectPrefix() . strtoupper($env_type) . '_' . $secret_definition;
             }
         }
+
+        // Allow non-env specific secret names.
+        foreach ($this->secret_definitions as $secret_definition) {
+            $valid_secret_names[] = $this->getProjectPrefix() . $secret_definition;
+        }
+
         return $valid_secret_names;
     }
 }
