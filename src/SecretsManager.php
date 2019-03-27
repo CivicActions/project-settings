@@ -2,6 +2,8 @@
 
 namespace Kducharm\ProjectSettings;
 
+use Kducharm\ProjectSettings\Constants\ProjectEnvironmentTypes;
+
 /**
  * Class SecretsManager
  * @package Kducharm\ProjectSettings
@@ -84,5 +86,32 @@ abstract class SecretsManager
     {
         $env_prefix = $this->project_settings->getEnvironmentType();
         return strtoupper($env_prefix) . '_';
+    }
+
+   /**
+     * Get Valid Secrets
+     * @return array
+     *   Array of Secret names
+     */
+    public function getValidSecrets()
+    {
+        $valid_secret_names = [];
+        try {
+            $env_types = ProjectEnvironmentTypes::getConstants();
+        } catch (\ReflectionException $e) {
+            echo $e->getMessage();
+        }
+        foreach ($env_types as $env_type) {
+            foreach ($this->secret_definitions as $secret_definition) {
+                $valid_secret_names[] = $this->getProjectPrefix() . strtoupper($env_type) . '_' . $secret_definition;
+            }
+        }
+
+        // Allow non-env specific secret names.
+        foreach ($this->secret_definitions as $secret_definition) {
+            $valid_secret_names[] = $this->getProjectPrefix() . $secret_definition;
+        }
+
+        return $valid_secret_names;
     }
 }
