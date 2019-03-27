@@ -57,8 +57,13 @@ An abstract class is provided to aid in retrieval of secrets `src/SecretsManager
 
 To utilize the secrets management functionality, the class should be extended to define the `$project_prefix` string and `$secrets_definitions` array with a project name and a list of secrets that are available.
 
-The default implementation of `getSecret` checks the PHP environment variables available using `getenv()` which would require setting php `variables_order` to include `E` in `php.ini`.
-You may extend the `getSecret` function to override its behavior on how to retrieve a secret.
+Different secrets providers can be used by extending the `src/SecretsProviders/SecretsProviderAbstract` class. Included in the project are:
+- **EnvSecretsProvider** - checks the PHP environment variables available using `getenv()` which would require setting php `variables_order` to include `E` in `php.ini`.
+- **AwsSecretsMgrSecretsProvider** - Utilizes the AWS SDK to retrieve a secret using `$client->getSecretValue()` method. This also supports JSON encoded values by defining a `['aws_secrets_mgr' => ['json' => true, 'json_key' => 'key']]` in the SecretsManager extended class (see `SampleSecretsManager.php` for an example).
+
+**EnvSecretsProvider** is the default provider, you may set the environment variable `PROJECT_SETTINGS_SECRETS_PROVIDER_CLASS` to the class such as `AwsSecretsMgrSecretsProvider` or call `setSecretProviderClass()` method in extended SecretsManager class.
+
+You may also extend the `getSecret` function to override its behavior on how to retrieve a secret.
 
 To retrieve a secret in a PHP file:
 ```
@@ -76,3 +81,5 @@ will look for the environment variables in this order:
 PROJECT_NAME_DEV_SECRET_NAME
 PROJECT_NAME_SECRET_NAME
 ```
+
+Secrets can be retrieved from JSON-encoded strings be defining the `bundle` and `key` elements in the secrets definition.

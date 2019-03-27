@@ -24,6 +24,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
         $this->projectSettings = new ProjectSettings('environments');
         try {
             $this->secretsManager = new SampleSecretsManager($this->projectSettings);
+            $this->secretsManager->setSecretProviderClass('EnvSecretsProvider');
         } catch (\Exception $e) {
             $this->throwException($e);
         }
@@ -47,22 +48,38 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
      */
     public function testSecretManager()
     {
+        $project_prefix = $this->secretsManager->getProjectPrefix();
+
         // Check for non-existent secret
+        putenv($project_prefix . 'DATABASE');
         $secret = $this->secretsManager->getSecret('DATABASE_PASSWORD');
-        $this->assertNull($secret);
+        $this->assertEmpty($secret);
 
         // Check fallback non-environment secret.
-        $project_prefix = $this->secretsManager->getProjectPrefix();
         $this->assertNotEmpty($project_prefix);
-        putenv($project_prefix . 'DATABASE_PASSWORD=abc123');
+        $db_secret = ['password' => 'abc123'];
+        putenv($project_prefix . 'DATABASE=' . json_encode($db_secret));
         $secret = $this->secretsManager->getSecret('DATABASE_PASSWORD');
         $this->assertEquals('abc123', $secret);
 
         // Check environment specific secret.
         $env_prefix = $this->secretsManager->getEnvironmentPrefix();
         $this->assertNotEmpty($env_prefix);
-        putenv($project_prefix . $env_prefix . 'DATABASE_PASSWORD=def456');
+        $db_secret = ['password' => 'def456'];
+        putenv($project_prefix . $env_prefix . 'DATABASE=' . json_encode($db_secret));
         $secret = $this->secretsManager->getSecret('DATABASE_PASSWORD');
         $this->assertEquals('def456', $secret);
+
+        // Check non-JSON encoded data.
+        putenv($project_prefix . 'NO_JSON_PASSWORD=jkl012');
+        $secret = $this->secretsManager->getSecret('NO_JSON_PASSWORD');
+        $this->assertEquals('jkl012', $secret);
+
+        // Check bypass prefix.
+        $secret = $this->secretsManager->getSecret('API_PASSWORD', true);
+        $this->assertEmpty($secret);
+        putenv('API_PASSWORD=ghi789');
+        $secret = $this->secretsManager->getSecret('API_PASSWORD', true);
+        $this->assertEquals('ghi789', $secret);
     }
 }
