@@ -14,22 +14,14 @@ class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
     /**
      * {@inheritdoc}
      */
-    public function getSecretValue($secret_name, $bypass_prefix = false)
+    public function getSecretValue($secret_name)
     {
-        $secret_definition = $this->secretsManager->getSecretDefinitions()[$secret_name];
-
-        // Return the override value if set.
-        if (isset($secret_definition['value'])) {
-            return $secret_definition['value'];
-        }
-
-        // Retrieve region from environment using project_prefix_env_AWS_REGION, AWS_REGION, then a default.
+        // Retrieve region from environment.
         $envSecretsProvider = new EnvSecretsProvider($this->secretsManager);
         $region = $envSecretsProvider->getSecretValue('AWS_DEFAULT_REGION');
 
-        // Attempt without project/env prefixing if empty.
         if (empty($region)) {
-            $region = $envSecretsProvider->getSecretValue('AWS_DEFAULT_REGION', true);
+            throw new \Exception("Could not retrieve AWS_DEFAULT_REGION from environment");
         }
 
         $client = new SecretsManagerClient([
@@ -37,51 +29,70 @@ class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
             'region' => $region,
         ]);
 
-
-        // If bundle is set, use that as the secret source.
-        $secret_name_secondary = '';
-
-        if (isset($secret_definition['bundle'])) {
-            $secret_name = $secret_definition['bundle'];
-        }
-
-        if (!$bypass_prefix) {
-            $secret_name_primary = $this->secretsManager->getProjectPrefix() .
-                $this->secretsManager->getEnvironmentPrefix() .
-                $secret_name;
-            $secret_name_secondary = $this->secretsManager->getProjectPrefix() .
-                $secret_name;
-        } else {
-            $secret_name_primary = $secret_name;
-        }
-
         try {
-            $result = $client->getSecretValue(['SecretId' => $secret_name_primary]);
+            $secret_path = $this->getSecretPath($secret_name);
+            $result = $client->getSecretValue(['SecretId' => $secret_path]);
         } catch (SecretsManagerException $exception) {
             // If not found, try without env prefix.
-            if (!empty($secret_name_secondary)) {
-                if ($exception->getStatusCode() == 400) {
-                    $result = $client->getSecretValue(['SecretId' => $secret_name_secondary]);
-                } else {
-                    throw $exception;
-                };
+            if ($exception->getStatusCode() == 400) {
+                $alt_secret_path = $this->getSecretPath($secret_name, 1);
+                try {
+                    $result = $client->getSecretValue(['SecretId' => $alt_secret_path]);
+                } catch (SecretsManagerException $exception) {
+                    echo "Could not load secret from AWS Secrets Manager - path(s) '{$secret_path}' '{$alt_secret_path}': " . $exception->getMessage();
+                    exit(1);
+                }
             } else {
-                throw $exception;
+                echo "Could not load secret from AWS Secrets Manager - path '{$secret_path}': " . $exception->getMessage();
+                exit(1);
             }
         }
 
         if (isset($result['SecretString'])) {
-            // @todo Returns whole undecoded JSON string if no bundle specified, not sure if that is useful.
             $secret = $result['SecretString'];
-            if (isset($secret_definition['bundle'])) {
-                // Check if JSON decoding is necessary by json_key definition.
-                $secret_decoded = json_decode($secret);
-                $secret = $secret_decoded->{$secret_definition['key']};
-            }
         } else {
             $secret = base64_decode($result['SecretBinary']);
         }
-
         return $secret;
+    }
+
+    /**
+     * Get Project Prefix (lowercase with /).
+     * @return string
+     */
+    public function getProjectPrefix()
+    {
+        return strtolower($this->secretsManager->getProjectName()) . '/';
+    }
+
+    /**
+     * Get Environment Prefix (lowercase with /).
+     * @return string
+     *   Environment Prefix
+     */
+    public function getEnvironmentPrefix()
+    {
+        $env_prefix = $this->secretsManager->getProjectSettings()->getEnvironmentType();
+        return strtolower($env_prefix) . '/';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecretPath($secret_name, $fallback = 0)
+    {
+        switch ($fallback) {
+            case 0:
+                $secret_path = $this->getEnvironmentPrefix() . $this->getProjectPrefix() . strtolower($secret_name);
+                break;
+            case 1:
+                $secret_path = $this->getProjectPrefix() . strtolower($secret_name);
+                break;
+            default:
+                $secret_path = strtolower($secret_name);
+                break;
+        }
+
+        return $secret_path;
     }
 }
