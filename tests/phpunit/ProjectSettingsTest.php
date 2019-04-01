@@ -48,7 +48,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
      */
     public function testSecretManager()
     {
-        $project_prefix = $this->secretsManager->getProjectPrefix();
+        $project_prefix = $this->secretsManager->env_secrets_provider->getProjectPrefix();
 
         // Check for non-existent secret
         putenv($project_prefix . 'DATABASE');
@@ -63,7 +63,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('abc123', $secret);
 
         // Check environment specific secret.
-        $env_prefix = $this->secretsManager->getEnvironmentPrefix();
+        $env_prefix = $this->secretsManager->env_secrets_provider->getEnvironmentPrefix();
         $this->assertNotEmpty($env_prefix);
         $db_secret = ['password' => 'def456'];
         putenv($project_prefix . $env_prefix . 'DATABASE=' . json_encode($db_secret));
