@@ -64,7 +64,6 @@ class EnvSecretsProvider extends SecretsProviderAbstract
                 $secret_path = strtoupper($secret_name);
                 break;
         }
-
         return $secret_path;
     }
 }

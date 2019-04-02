@@ -18,7 +18,13 @@ class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
     {
         // Retrieve region from environment.
         $envSecretsProvider = new EnvSecretsProvider($this->secretsManager);
-        $region = $envSecretsProvider->getSecretValue('AWS_DEFAULT_REGION');
+        $secret_definitions = $this->secretsManager->getSecretDefinitions();
+        if (isset($secret_definitions['AWS_DEFAULT_REGION']) &&
+            isset($secret_definitions['AWS_DEFAULT_REGION']['value'])) {
+            $region = $secret_definitions['AWS_DEFAULT_REGION']['value'];
+        } else {
+            $region = $envSecretsProvider->getSecretValue('AWS_DEFAULT_REGION');
+        }
 
         if (empty($region)) {
             throw new \Exception("Could not retrieve AWS_DEFAULT_REGION from environment");
