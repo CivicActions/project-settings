@@ -61,7 +61,7 @@ Different secrets providers can be used by extending the `src/SecretsProviders/S
 - **EnvSecretsProvider** - checks the PHP environment variables available using `getenv()` which would require setting php `variables_order` to include `E` in `php.ini`.
 - **AwsSecretsMgrSecretsProvider** - Utilizes the AWS SDK to retrieve a secret using `$client->getSecretValue()` method. This also supports JSON encoded values by defining a `['aws_secrets_mgr' => ['json' => true, 'json_key' => 'key']]` in the SecretsManager extended class (see `SampleSecretsManager.php` for an example).
 
-**EnvSecretsProvider** is the default provider, you may set the environment variable `PROJECT_SETTINGS_SECRETS_PROVIDER_CLASS` to the class such as `AwsSecretsMgrSecretsProvider` or call `setSecretProviderClass()` method in extended SecretsManager class.
+**EnvSecretsProvider** is the default provider, you may set the environment variable `PROJECT_SETTINGS_SECRETS_PROVIDER_CLASS` to the class such as `AwsSecretsMgrSecretsProvider` or call `setSecretsProviderClass()` method in extended SecretsManager class.
 
 You may also extend the `getSecret` function to override its behavior on how to retrieve a secret.
 

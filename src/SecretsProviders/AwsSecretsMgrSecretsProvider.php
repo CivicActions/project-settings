@@ -14,10 +14,10 @@ class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
     /**
      * {@inheritdoc}
      */
-    public function getSecretValue($secret_name)
+    public function getSecretValue($secret_name, $hide_exceptions = false)
     {
         // Retrieve region from environment.
-        $envSecretsProvider = new EnvSecretsProvider($this->secretsManager);
+        $envSecretsProvider =$this->secretsManager->getSecretsProvider('EnvSecretsProvider');
         $secret_definitions = $this->secretsManager->getSecretDefinitions();
         if (isset($secret_definitions['AWS_DEFAULT_REGION']) &&
             isset($secret_definitions['AWS_DEFAULT_REGION']['value'])) {
@@ -45,12 +45,20 @@ class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
                 try {
                     $result = $client->getSecretValue(['SecretId' => $alt_secret_path]);
                 } catch (SecretsManagerException $exception) {
-                    echo "Could not load secret from AWS Secrets Manager - path(s) '{$secret_path}' '{$alt_secret_path}': " . $exception->getMessage();
-                    exit(1);
+                    if (!$hide_exceptions) {
+                        echo "Could not load secret from AWS Secrets Manager - path(s) '{$secret_path}' '{$alt_secret_path}': " . $exception->getMessage();
+                        exit(1);
+                    } else {
+                        return null;
+                    }
                 }
             } else {
-                echo "Could not load secret from AWS Secrets Manager - path '{$secret_path}': " . $exception->getMessage();
-                exit(1);
+                if (!$hide_exceptions) {
+                    echo "Could not load secret from AWS Secrets Manager - path '{$secret_path}': " . $exception->getMessage();
+                    exit(1);
+                } else {
+                    return null;
+                }
             }
         }
 

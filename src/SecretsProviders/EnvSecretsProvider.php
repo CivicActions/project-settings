@@ -13,7 +13,7 @@ class EnvSecretsProvider extends SecretsProviderAbstract
     /**
      * {@inheritdoc}
      */
-    public function getSecretValue($secret_name)
+    public function getSecretValue($secret_name, $hide_exceptions = false)
     {
         // Attempt primary, then secondary secret name if specified.
         for ($fallback = 0; $fallback < 3; $fallback++) {
