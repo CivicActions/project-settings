@@ -84,6 +84,7 @@ abstract class SecretsProviderAbstract
                 }
             } catch (\Exception $e) {
                 // @todo Does not throw any errors so it doesn't corrupt export output.
+                fwrite(STDERR, $e->getMessage() . "\nSecret: {$secret_name}\n");
             }
         }
     }
