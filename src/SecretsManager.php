@@ -143,23 +143,20 @@ abstract class SecretsManager
                 $secrets_provider = $this->getSecretsProvider();
             }
 
-            try {
-                // Check if this part of a bundle.
-                if (isset($secret_definition['bundle'])) {
-                    $secret_bundle = $secrets_provider->getSecretValue($secret_definition['bundle']);
-                    $secret_decoded = json_decode($secret_bundle, true);
-                    $secret_value = isset($secret_decoded[$secret_definition['key']]) ? $secret_decoded[$secret_definition['key']] : null;
-                } else {
-                    $secret_value = $secrets_provider->getSecretValue($secret_name);
-                }
-                return $secret_value;
-            } catch (\Exception $e) {
-                // @todo - Currently outputting error message only so it doesn't disrupt on unset secrets.
-                echo $e->getMessage() . "\nSecret: {$secret_name}\n";
-                return null;
+            // Check if this part of a bundle.
+            if (isset($secret_definition['bundle'])) {
+                $secret_bundle = $secrets_provider->getSecretValue($secret_definition['bundle']);
+                $secret_decoded = json_decode($secret_bundle, true);
+                $secret_value = isset($secret_decoded[$secret_definition['key']]) ? $secret_decoded[$secret_definition['key']] : null;
+            } else {
+                $secret_value = $secrets_provider->getSecretValue($secret_name);
             }
+            if (is_array($secret_value)) {
+                return json_encode($secret_value);
+            }
+            return $secret_value;
         } else {
-            throw new \Exception("Secret {$secret_name} not a valid secret name (undefined in secret definitions).");
+            throw new \Exception("Not a valid secret name (undefined in secret definitions).");
         }
     }
 

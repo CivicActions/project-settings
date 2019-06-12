@@ -50,10 +50,19 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     {
         $project_prefix = $this->secretsManager->getSecretsProvider()->getProjectPrefix();
 
-        // Check for non-existent secret
+        // Check for non-existent secret.
+        $exceptionCaught = false;
+        try {
+            $secret = $this->secretsManager->getSecret('DOESNT_EXIST');
+        } catch (\Exception $e) {
+            $exceptionCaught = true;
+        }
+        $this->assertTrue($exceptionCaught, 'Secret not existing did not catch exception.');
+
+        // Check for non-defined secret
         putenv($project_prefix . 'DATABASE');
         $secret = $this->secretsManager->getSecret('DATABASE_PASSWORD');
-        $this->assertEmpty($secret);
+        $this->assertEmpty($secret, 'Secret value was not empty.');
 
         // Check fallback non-environment secret.
         $this->assertNotEmpty($project_prefix);
@@ -77,7 +86,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
 
         // Check bypass prefix.
         $secret = $this->secretsManager->getSecret('API_PASSWORD', true);
-        $this->assertEmpty($secret);
+        $this->assertEmpty($secret, 'Secret value was not empty.');
         putenv('API_PASSWORD=ghi789');
         $secret = $this->secretsManager->getSecret('API_PASSWORD', true);
         $this->assertEquals('ghi789', $secret);
