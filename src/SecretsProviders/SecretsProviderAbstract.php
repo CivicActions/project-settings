@@ -77,8 +77,17 @@ abstract class SecretsProviderAbstract
                 foreach ($secret_definitions as $name => $definition) {
                     if (isset($definition['bundle']) && $definition['bundle'] == $bundle) {
                         if (isset($secret_decoded[$definition['key']])) {
+                          $decodedSecretDefinitionKey = $secret_decoded[$definition['key']];
+                          if (is_array($decodedSecretDefinitionKey)) {
+                            foreach ($decodedSecretDefinitionKey as $item) {
+                              $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($name);
+                              echo "export {$secret_path}=\"{$item}\"\n";
+                            }
+                          }
+                          elseif (is_string($decodedSecretDefinitionKey)) {
                             $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($name);
                             echo "export {$secret_path}=\"{$secret_decoded[$definition['key']]}\"\n";
+                          }
                         }
                     }
                 }
