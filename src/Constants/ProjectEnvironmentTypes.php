@@ -18,4 +18,5 @@ abstract class ProjectEnvironmentTypes extends BasicEnum
     const ENV_TYPE_PROD = 'prod';
     const ENV_TYPE_CI = 'ci';
     const ENV_TYPE_QA = 'qa';
+    const ENV_TYPE_TEST = 'test';
 }
