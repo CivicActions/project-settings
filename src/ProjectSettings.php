@@ -204,7 +204,7 @@ class ProjectSettings implements ProjectSettingsInterface
                         return true;
 
                     case 'test':
-                        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_STAGE);
+                        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_TEST);
                         return true;
 
                     case 'live':
