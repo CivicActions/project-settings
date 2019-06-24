@@ -81,8 +81,7 @@ abstract class SecretsProviderAbstract
                             $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($name);
                             if (is_array($decodedSecretDefinitionKey)) {
                                 echo "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
-                            }
-                            elseif (is_string($decodedSecretDefinitionKey)) {
+                            } elseif (is_string($decodedSecretDefinitionKey)) {
                                 echo "export {$secret_path}=\"{$secret_decoded[$definition['key']]}\"\n";
                             }
                         }
