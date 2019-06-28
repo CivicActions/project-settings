@@ -90,5 +90,10 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
         putenv('API_PASSWORD=ghi789');
         $secret = $this->secretsManager->getSecret('API_PASSWORD', true);
         $this->assertEquals('ghi789', $secret);
+
+        // Check bundle json exists.
+        $secrets = $this->secretsManager->getSecretsProvider()->getSecrets();
+        $bundle_found = (strpos($secrets, $project_prefix . $env_prefix . 'DATABASE=') !== false);
+        $this->assertTrue($bundle_found, 'Bundle ' . $secrets, $project_prefix . $env_prefix . 'DATABASE not found in exports.');
     }
 }

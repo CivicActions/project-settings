@@ -66,6 +66,7 @@ abstract class SecretsProviderAbstract
      */
     public function getSecrets()
     {
+        $output = '';
         $secret_definitions = $this->secretsManager->getSecretDefinitions();
         $bundles = array_column($secret_definitions, 'bundle');
         $bundles = array_unique($bundles);
@@ -74,15 +75,19 @@ abstract class SecretsProviderAbstract
             try {
                 $secret_value = $this->getSecretValue($bundle, true);
                 $secret_decoded = json_decode($secret_value, true);
+                // Export bundle as well as individual values.
+                $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($bundle);
+                $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+
                 foreach ($secret_definitions as $name => $definition) {
                     if (isset($definition['bundle']) && $definition['bundle'] == $bundle) {
                         if (isset($secret_decoded[$definition['key']])) {
                             $decodedSecretDefinitionKey = $secret_decoded[$definition['key']];
                             $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($name);
                             if (is_array($decodedSecretDefinitionKey)) {
-                                echo "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+                                $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
                             } elseif (is_string($decodedSecretDefinitionKey)) {
-                                echo "export {$secret_path}=\"{$secret_decoded[$definition['key']]}\"\n";
+                                $output .= "export {$secret_path}=\"{$secret_decoded[$definition['key']]}\"\n";
                             }
                         }
                     }
@@ -92,5 +97,6 @@ abstract class SecretsProviderAbstract
                 fwrite(STDERR, $e->getMessage() . "\nSecret: {$secret_name}\n");
             }
         }
+        return $output;
     }
 }
