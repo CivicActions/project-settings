@@ -68,6 +68,25 @@ abstract class SecretsProviderAbstract
     {
         $output = '';
         $secret_definitions = $this->secretsManager->getSecretDefinitions();
+
+        // Output non-bundles who are not env secrets provided.
+        foreach ($secret_definitions as $key => $secret_def) {
+            if (!isset($secret_def['bundle'])) {
+                if (!isset($secret_def['secrets_provider_class']) ||
+                    (isset($secret_def['secrets_provider_class']) && $secret_def['secrets_provider_class'] != 'EnvSecretsProvider')) {
+                    try {
+                        $secret_value = $this->getSecretValue($key);
+
+                        $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($key);
+                        $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+                    } catch (\Exception $e) {
+                        // @todo Does not throw any errors so it doesn't corrupt export output.
+                        fwrite(STDERR, $e->getMessage() . "\nSecret: {$key}\n");
+                    }
+                }
+            }
+        }
+
         $bundles = array_column($secret_definitions, 'bundle');
         $bundles = array_unique($bundles);
 

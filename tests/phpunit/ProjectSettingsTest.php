@@ -95,5 +95,10 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
         $secrets = $this->secretsManager->getSecretsProvider()->getSecrets();
         $bundle_found = (strpos($secrets, $project_prefix . $env_prefix . 'DATABASE=') !== false);
         $this->assertTrue($bundle_found, 'Bundle ' . $secrets, $project_prefix . $env_prefix . 'DATABASE not found in exports.');
+
+        // Check non-bundle secrets export exists.
+        $secrets = $this->secretsManager->getSecretsProvider()->getSecrets();
+        $bundle_found = (strpos($secrets, $project_prefix . $env_prefix . 'NO_JSON_PASSWORD=') !== false);
+        $this->assertTrue($bundle_found, 'Non-Bundle ' . $secrets, $project_prefix . $env_prefix . 'NO_JSON_PASSWORD not found in exports.');
     }
 }
