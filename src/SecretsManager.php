@@ -151,6 +151,11 @@ abstract class SecretsManager
             } else {
                 $secret_value = $secrets_provider->getSecretValue($secret_name);
             }
+
+            // Optionally decode base64 if set.
+            if (isset($secret_definition['base64']) && $secret_definition['base64'] === true) {
+                $secret_value = base64_decode($secret_value);
+            }
             if (is_array($secret_value)) {
                 return json_encode($secret_value);
             }

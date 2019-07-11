@@ -76,7 +76,6 @@ abstract class SecretsProviderAbstract
                     (isset($secret_def['secrets_provider_class']) && $secret_def['secrets_provider_class'] != 'EnvSecretsProvider')) {
                     try {
                         $secret_value = $this->getSecretValue($key);
-
                         $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($key);
                         $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
                     } catch (\Exception $e) {
@@ -106,7 +105,7 @@ abstract class SecretsProviderAbstract
                             if (is_array($decodedSecretDefinitionKey)) {
                                 $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
                             } elseif (is_string($decodedSecretDefinitionKey)) {
-                                $output .= "export {$secret_path}=\"{$secret_decoded[$definition['key']]}\"\n";
+                                $output .= "export {$secret_path}=\"${decodedSecretDefinitionKey}\"\n";
                             }
                         }
                     }
