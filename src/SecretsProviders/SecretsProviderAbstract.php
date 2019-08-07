@@ -77,7 +77,7 @@ abstract class SecretsProviderAbstract
                     try {
                         $secret_value = $this->getSecretValue($key);
                         $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($key);
-                        $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+                        $output .= "export {$secret_path}='" . self::escapeVar($secret_value) . "'\n";
                     } catch (\Exception $e) {
                         // @todo Does not throw any errors so it doesn't corrupt export output.
                         fwrite(STDERR, $e->getMessage() . "\nSecret: {$key}\n");
@@ -95,7 +95,8 @@ abstract class SecretsProviderAbstract
                 $secret_decoded = json_decode($secret_value, true);
                 // Export bundle as well as individual values.
                 $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($bundle);
-                $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+                // Escape bash
+                $output .= "export {$secret_path}='" . self::escapeVar($secret_value) . "'\n";
 
                 foreach ($secret_definitions as $name => $definition) {
                     if (isset($definition['bundle']) && $definition['bundle'] == $bundle) {
@@ -103,9 +104,9 @@ abstract class SecretsProviderAbstract
                             $decodedSecretDefinitionKey = $secret_decoded[$definition['key']];
                             $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($name);
                             if (is_array($decodedSecretDefinitionKey)) {
-                                $output .= "export {$secret_path}=\"" . addslashes($secret_value) . "\"\n";
+                                $output .= "export {$secret_path}='" . self::escapeVar($secret_value) . "'\n";
                             } elseif (is_string($decodedSecretDefinitionKey)) {
-                                $output .= "export {$secret_path}=\"${decodedSecretDefinitionKey}\"\n";
+                                $output .= "export {$secret_path}='" . self::escapeVar($decodedSecretDefinitionKey) . "'\n";
                             }
                         }
                     }
@@ -116,5 +117,17 @@ abstract class SecretsProviderAbstract
             }
         }
         return $output;
+    }
+
+    /**
+     * Escape variable.
+     *
+     * @param $var
+     * @return mixed|string
+     */
+    public static function escapeVar($var)
+    {
+        $var = str_replace("'", "'\\''", $var);
+        return $var;
     }
 }
