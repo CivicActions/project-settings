@@ -76,7 +76,6 @@ abstract class SecretsProviderAbstract
                     (isset($secret_def['secrets_provider_class']) && $secret_def['secrets_provider_class'] != 'EnvSecretsProvider')) {
                     try {
                         $secret_value = $this->getSecretValue($key);
-
                         $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($key);
                         $output .= "export {$secret_path}='" . self::escapeVar($secret_value) . "'\n";
                     } catch (\Exception $e) {
