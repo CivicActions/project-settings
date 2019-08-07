@@ -5,6 +5,7 @@ namespace Kducharm\ProjectSettings\Tests\Command;
 use Kducharm\ProjectSettings\Constants\ProjectEnvironmentTypes;
 use Kducharm\ProjectSettings\ProjectSettings;
 use Kducharm\ProjectSettings\SampleSecretsManager;
+use Kducharm\ProjectSettings\SecretsProviders\SecretsProviderAbstract;
 
 class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
 {
@@ -100,5 +101,36 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
         $secrets = $this->secretsManager->getSecretsProvider()->getSecrets();
         $bundle_found = (strpos($secrets, $project_prefix . $env_prefix . 'NO_JSON_PASSWORD=') !== false);
         $this->assertTrue($bundle_found, 'Non-Bundle ' . $secrets, $project_prefix . $env_prefix . 'NO_JSON_PASSWORD not found in exports.');
+    }
+
+    /**
+     * Test Env Export Escaping.
+     */
+    public function testEnvExportEscape()
+    {
+        // Generate a shell export line for ascii char set.
+        $ascii_string = self::generateAsciiChars();
+        $ascii_export_test_cmd = "export TEST_ASCII_CHARS='" .
+            SecretsProviderAbstract::escapeVar($ascii_string) . "' && echo \"\$TEST_ASCII_CHARS\"";
+
+        // Read output back from shell escape.
+        exec($ascii_export_test_cmd, $compare_ascii_string_array);
+
+        $this->assertEquals($compare_ascii_string_array[0], $ascii_string);
+    }
+
+    /**
+     * Generate ASCII Chars for testing.
+     */
+    private static function generateAsciiChars()
+    {
+        $output = '';
+        for ($i = 32; $i < 127; $i++) {
+            $output .= mb_convert_encoding(chr($i), 'UTF-8', 'ISO-8859-1');
+        }
+        for ($i = 128; $i < 255; $i++) {
+            $output .= mb_convert_encoding(chr($i), 'UTF-8', 'ISO-8859-1');
+        }
+        return $output;
     }
 }
