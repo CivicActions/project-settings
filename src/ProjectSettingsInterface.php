@@ -1,6 +1,6 @@
 <?php
 
-namespace Kducharm\ProjectSettings;
+namespace CivicActions\ProjectSettings;
 
 interface ProjectSettingsInterface
 {

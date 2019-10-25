@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/kducharm/project_settings.svg?branch=master)](https://travis-ci.com/kducharm/project_settings)
+[![Build Status](https://travis-ci.com/civicactions/project-settings.svg?branch=master)](https://travis-ci.com/civicactions/project-settings)
 
 # Project Settings
 
@@ -18,12 +18,12 @@ This project is intended to aid in loading of various PHP settings files based o
 
 ## Usage
 
-* Install via `composer require kducharm/project_settings`.
+* Install via `composer require civicactions/project-settings`.
 * Copy the `environments` folder to a location in your project outside of the web root.
 * Either set environment variable `PROJECT_SETTINGS_ENV_FOLDER=/path/to/environments/` or pass path into ProjectSettings().
 * Add the following PHP code to your bootstrap:
 ``` php
-$project_settings = new Kducharm\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
+$project_settings = new CivicActions\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
 foreach ($project_settings->getSettingsFiles() as $project_settings_file) {
   require_once $project_settings_file;
 }
@@ -37,7 +37,7 @@ Their available values are set in `src/ProjectSettingsConstants.php`:
 * `PROJECT_SERVER_ENVIRONMENT` - Server environment such as `local`, `qa`, `dev`, `stage` or `prod`
 
 These environment variables can be set in your CI pipelines, docker configuration files, or other location prior to including the following script:
-`eval $($APP_ROOT/vendor/kducharm/project_settings/bin/init_project_settings)`
+`eval $($APP_ROOT/vendor/civicactions/project-settings/bin/init_project_settings)`
 
 Once executed, the hosting/server environment will attempt to be automatically detected (Acquia/Pantheon). 
 The CI platform will also attempted to be automatically detected, but may need manual override in cases like containerization where the platform's environment variables may not persist.
@@ -67,8 +67,8 @@ You may also extend the `getSecret` function to override its behavior on how to 
 
 To retrieve a secret in a PHP file:
 ```
-$project_settings = new Kducharm\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
-$secrets_manager = new Kducharm\ProjectSettings\SampleSecretsManager($project_settings);
+$project_settings = new Civicactions\ProjectSettings\ProjectSettings(); // If env variable not set, pass in '/path/to/environments/' to ProjectSettings().
+$secrets_manager = new CivicActions\ProjectSettings\SampleSecretsManager($project_settings);
 $secret = $secrets_manager->getSecret('SECRET_NAME');
 ```
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Kducharm\ProjectSettings;
+namespace CivicActions\ProjectSettings;
 
 /**
  * Class SampleSecretsManager
- * @package Kducharm\ProjectSettings
+ * @package CivicActions\ProjectSettings
  */
 class SampleSecretsManager extends SecretsManager
 {

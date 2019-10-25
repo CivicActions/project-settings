@@ -1,6 +1,6 @@
 <?php
 
-namespace Kducharm\ProjectSettings\Utility;
+namespace CivicActions\ProjectSettings\Utility;
 
 use ReflectionClass;
 

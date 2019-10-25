@@ -1,6 +1,6 @@
 {
-  "name": "kducharm/project_settings",
-  "description": "PHP Project Settings platform/environment switcher",
+  "name": "civicactions/project-settings",
+  "description": "PHP Project Settings and Secrets Management platform/environment switcher",
   "type": "library",
   "license": "GPL-2.0+",
   "authors": [

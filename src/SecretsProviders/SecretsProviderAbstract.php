@@ -1,8 +1,8 @@
 <?php
 
-namespace Kducharm\ProjectSettings\SecretsProviders;
+namespace CivicActions\ProjectSettings\SecretsProviders;
 
-use Kducharm\ProjectSettings\SecretsManager;
+use CivicActions\ProjectSettings\SecretsManager;
 
 /**
  * Class SecretsProviderAbstract

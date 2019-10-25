@@ -1,11 +1,11 @@
 <?php
 
-namespace Kducharm\ProjectSettings\Tests\Command;
+namespace CivicActions\ProjectSettings\Tests\Command;
 
-use Kducharm\ProjectSettings\Constants\ProjectEnvironmentTypes;
-use Kducharm\ProjectSettings\ProjectSettings;
-use Kducharm\ProjectSettings\SampleSecretsManager;
-use Kducharm\ProjectSettings\SecretsProviders\SecretsProviderAbstract;
+use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
+use CivicActions\ProjectSettings\ProjectSettings;
+use CivicActions\ProjectSettings\SampleSecretsManager;
+use CivicActions\ProjectSettings\SecretsProviders\SecretsProviderAbstract;
 
 class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
 {

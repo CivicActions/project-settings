@@ -1,13 +1,13 @@
 <?php
 
-namespace Kducharm\ProjectSettings\SecretsProviders;
+namespace CivicActions\ProjectSettings\SecretsProviders;
 
 use Aws\SecretsManager\Exception\SecretsManagerException;
 use Aws\SecretsManager\SecretsManagerClient;
 
 /**
  * Class AwsSecretsMgrSecretsProvider
- * @package Kducharm\ProjectSettings\SecretsProviders
+ * @package CivicActions\ProjectSettings\SecretsProviders
  */
 class AwsSecretsMgrSecretsProvider extends SecretsProviderAbstract
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Kducharm\ProjectSettings\SecretsProviders;
+namespace CivicActions\ProjectSettings\SecretsProviders;
 
 /**
  * Retrieve secrets from environment variables.
- * @package Kducharm\ProjectSettings\SecretsProviders
+ * @package CivicActions\ProjectSettings\SecretsProviders
  */
 class EnvSecretsProvider extends SecretsProviderAbstract
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Kducharm\ProjectSettings;
+namespace CivicActions\ProjectSettings;
 
-use Kducharm\ProjectSettings\Constants\ProjectCIPlatforms;
-use Kducharm\ProjectSettings\Constants\ProjectEnvironmentTypes;
-use Kducharm\ProjectSettings\Constants\ProjectHostingPlatforms;
+use CivicActions\ProjectSettings\Constants\ProjectCIPlatforms;
+use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
+use CivicActions\ProjectSettings\Constants\ProjectHostingPlatforms;
 
 /**
  * Class ProjectSettings

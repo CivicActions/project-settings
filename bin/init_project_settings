@@ -10,5 +10,5 @@ if (file_exists(__DIR__.'/vendor/autoload.php')) {
     die('Could not find autoload.php');
 }
 $classLoader = require $autoloaderPath;
-$project_settings = new Kducharm\ProjectSettings\ProjectSettings();
+$project_settings = new CivicActions\ProjectSettings\ProjectSettings();
 $project_settings->printShellExports();

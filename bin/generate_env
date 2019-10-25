@@ -12,12 +12,12 @@ if (file_exists(__DIR__.'/vendor/autoload.php')) {
 $classLoader = require $autoloaderPath;
 
 if (count($argv) > 1) {
-    $project_settings = new Kducharm\ProjectSettings\ProjectSettings();
-    $secrets_class = 'Kducharm\ProjectSettings\\' . $argv[1];
+    $project_settings = new CivicActions\ProjectSettings\ProjectSettings();
+    $secrets_class = 'CivicActions\ProjectSettings\\' . $argv[1];
 }
 else {
-    $project_settings = new Kducharm\ProjectSettings\ProjectSettings('environments');
-    $secrets_class = 'Kducharm\ProjectSettings\SampleSecretsManager';
+    $project_settings = new CivicActions\ProjectSettings\ProjectSettings('environments');
+    $secrets_class = 'CivicActions\ProjectSettings\SampleSecretsManager';
 }
 
 try {

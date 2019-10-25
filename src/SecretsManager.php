@@ -1,13 +1,13 @@
 <?php
 
-namespace Kducharm\ProjectSettings;
+namespace CivicActions\ProjectSettings;
 
-use Kducharm\ProjectSettings\Constants\ProjectEnvironmentTypes;
-use Kducharm\ProjectSettings\SecretsProviders\EnvSecretsProvider;
+use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
+use CivicActions\ProjectSettings\SecretsProviders\EnvSecretsProvider;
 
 /**
  * Class SecretsManager
- * @package Kducharm\ProjectSettings
+ * @package CivicActions\ProjectSettings
  */
 abstract class SecretsManager
 {
@@ -45,7 +45,7 @@ abstract class SecretsManager
         $secrets_provider_class_override = getenv(self::PROJECT_SETTINGS_SECRETS_PROVIDER_CLASS_OVERRIDE);
         if (!empty($secrets_provider_class_override)) {
             // Validate secrets provider class exists.
-            if (!class_exists('Kducharm\ProjectSettings\SecretsProviders\\' . $secrets_provider_class_override)) {
+            if (!class_exists('CivicActions\ProjectSettings\SecretsProviders\\' . $secrets_provider_class_override)) {
                 throw new \Exception("{$secrets_provider_class_override} Secrets Provider Class does not exist!");
             }
             $this->setSecretsProviderClass($secrets_provider_class_override);
@@ -233,7 +233,7 @@ abstract class SecretsManager
             $secrets_provider_class = $this->getSecretsProviderClass();
         }
 
-        $secrets_provider_class_name = 'Kducharm\ProjectSettings\SecretsProviders\\' . $secrets_provider_class;
+        $secrets_provider_class_name = 'CivicActions\ProjectSettings\SecretsProviders\\' . $secrets_provider_class;
         // Validate secrets provider class exists.
         if (!class_exists($secrets_provider_class_name)) {
             throw new \Exception("{$secrets_provider_class_name} Secrets Provider Class does not exist!");

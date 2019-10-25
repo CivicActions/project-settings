@@ -1,8 +1,8 @@
 <?php
 
-namespace Kducharm\ProjectSettings\Constants;
+namespace CivicActions\ProjectSettings\Constants;
 
-use Kducharm\ProjectSettings\Utility\BasicEnum;
+use CivicActions\ProjectSettings\Utility\BasicEnum;
 
 /**
  * Class ProjectEnvironmentTypes
