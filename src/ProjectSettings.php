@@ -2,10 +2,6 @@
 
 namespace CivicActions\ProjectSettings;
 
-use CivicActions\ProjectSettings\Constants\ProjectCIPlatforms;
-use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
-use CivicActions\ProjectSettings\Constants\ProjectHostingPlatforms;
-
 /**
  * Class ProjectSettings
  */
@@ -13,13 +9,19 @@ class ProjectSettings implements ProjectSettingsInterface
 {
     // Environment variables that can override hosting/ci platforms and env type.
     const PROJECT_HOSTING_PLATFORM_ENV_OVERRIDE = 'PROJECT_HOSTING_PLATFORM';
+    const PROJECT_HOSTING_PLATFORMS_CLASS_ENV_OVERRIDE = 'PROJECT_HOSTING_PLATFORMS_CLASS';
     const PROJECT_CI_PLATFORM_ENV_OVERRIDE = 'PROJECT_CI_PLATFORM';
+    const PROJECT_CI_PLATFORMS_CLASS_ENV_OVERRIDE = 'PROJECT_CI_PLATFORMS_CLASS';
     const PROJECT_ENVIRONMENT_TYPE_ENV_OVERRIDE = 'PROJECT_SERVER_ENVIRONMENT';
+    const PROJECT_ENVIRONMENT_TYPES_CLASS_ENV_OVERRIDE = 'PROJECT_ENVIRONMENT_TYPES_CLASS';
     const PROJECT_SETTINGS_ENV_FOLDER_OVERRIDE = 'PROJECT_SETTINGS_ENV_FOLDER';
 
     private $hostingPlatform;
+    private $hostingPlatformsClass = '\CivicActions\ProjectSettings\Constants\ProjectHostingPlatforms';
     private $ciPlatform;
+    private $ciPlatformsClass = '\CivicActions\ProjectSettings\Constants\ProjectCIPlatforms';
     private $environmentType;
+    private $environmentTypesClass = '\CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes';
 
     private $detected_hosting_platform = false;
     private $detected_ci_platform = false;
@@ -32,9 +34,20 @@ class ProjectSettings implements ProjectSettingsInterface
      *
      * @param string $settings_dir
      *   If set, will look for environments folder in specified directory.
+     * @param string $environmentTypesClass
+     *   Environment Types Class override.
+     * @param string $hostingPlatformsClass
+     *   Hosting Platforms Types Class override.
+     * @param string $ciPlatformsClass
+     *   CI Platforms override.
+     * @throws \Exception
      */
-    public function __construct($settings_dir = '')
-    {
+    public function __construct(
+        $settings_dir = '',
+        $environmentTypesClass = '',
+        $hostingPlatformsClass = '',
+        $ciPlatformsClass = ''
+    ) {
         if (!empty($settings_dir)) {
             $this->settings_root_dir = rtrim($settings_dir, '/');
         } elseif ($settings_dir = rtrim(getenv(self::PROJECT_SETTINGS_ENV_FOLDER_OVERRIDE))) {
@@ -42,11 +55,89 @@ class ProjectSettings implements ProjectSettingsInterface
         } else {
             $this->settings_root_dir = dirname(__FILE__);
         }
+
+        $this->loadCustomClasses();
+
+        if (!empty($environmentTypesClass)) {
+            $this->setEnvironmentTypesClass($environmentTypesClass);
+        } elseif ($env_types_class = rtrim(getenv(self::PROJECT_ENVIRONMENT_TYPES_CLASS_ENV_OVERRIDE))) {
+            $this->setEnvironmentTypesClass($env_types_class);
+        }
+
+        if (!empty($hostingPlatformsClass)) {
+            $this->setHostingPlatformsClass($hostingPlatformsClass);
+        } elseif ($hosting_platforms_class = rtrim(getenv(self::PROJECT_HOSTING_PLATFORMS_CLASS_ENV_OVERRIDE))) {
+            $this->setHostingPlatformsClass($hosting_platforms_class);
+        }
+
+        if (!empty($ciPlatformsClass)) {
+            $this->setCIPlatformsClass($ciPlatformsClass);
+        } elseif ($ci_platforms_class = rtrim(getenv(self::PROJECT_CI_PLATFORMS_CLASS_ENV_OVERRIDE))) {
+            $this->setCIPlatformsClass($ci_platforms_class);
+        }
+
         $this->detected_hosting_platform = $this->determineHostingPlatform();
         $this->detected_ci_platform = $this->determineCIPlatform();
-        $this->detected_environment_type =  $this->determineEnvironmentType();
+        $this->detected_environment_type = $this->determineEnvironmentType();
         $this->setEnvVariables();
         $this->scanSettingsFiles();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEnvironmentTypesClass()
+    {
+        return $this->environmentTypesClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEnvironmentTypesClass($environmentTypesClass)
+    {
+        // Check class exists.
+        if (!class_exists($environmentTypesClass)) {
+            throw new \Exception("Missing environmentTypesClass " . $environmentTypesClass);
+        }
+
+        $this->environmentTypesClass = $environmentTypesClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getHostingPlatformsClass()
+    {
+        return $this->hostingPlatformsClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setHostingPlatformsClass($hostingPlatformsClass)
+    {
+        // Check class exists.
+        if (!class_exists($hostingPlatformsClass)) {
+            throw new \Exception("Missing environmentTypesClass " . $hostingPlatformsClass);
+        }
+        $this->hostingPlatformsClass = $hostingPlatformsClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCIPlatformsClass()
+    {
+        return $this->ciPlatformsClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCIPlatformsClass($ciPlatformsClass)
+    {
+        $this->ciPlatformsClass = $ciPlatformsClass;
     }
 
     /**
@@ -56,34 +147,35 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     protected function determineCIPlatform()
     {
+        $ci_platforms_class = $this->getCIPlatformsClass();
         if ($ci_platform = getenv(self::PROJECT_CI_PLATFORM_ENV_OVERRIDE)) {
-            if (ProjectHostingPlatforms::isValidValue($ci_platform, true)) {
+            if ($ci_platforms_class::isValidValue($ci_platform, true)) {
                 $this->setCIPlatform($ci_platform);
                 return true;
             }
         }
 
         if (getenv('TRAVIS') !== false) {
-            $this->setCIPlatform(ProjectCIPlatforms::CI_PLATFORM_TRAVIS);
+            $this->setCIPlatform($ci_platforms_class::CI_PLATFORM_TRAVIS);
             return true;
         }
 
         if (getenv('PIPELINE_ENV') !== false) {
-            $this->setCIPlatform(ProjectCIPlatforms::CI_PLATFORM_PIPELINES);
+            $this->setCIPlatform($ci_platforms_class::CI_PLATFORM_PIPELINES);
             return true;
         }
 
         if (getenv('PROBO_ENVIRONMENT') !== false) {
-            $this->setCIPlatform(ProjectCIPlatforms::CI_PLATFORM_PROBO);
+            $this->setCIPlatform($ci_platforms_class::CI_PLATFORM_PROBO);
             return true;
         }
 
         if (getenv('TUGBOAT_URL') !== false) {
-            $this->setCIPlatform(ProjectCIPlatforms::CI_PLATFORM_TUGBOAT);
+            $this->setCIPlatform($ci_platforms_class::CI_PLATFORM_TUGBOAT);
             return true;
         }
         if (getenv('GITLAB_CI') !== false && getenv('GITLAB_CI') == 'true') {
-            $this->setCIPlatform(ProjectCIPlatforms::CI_PLATFORM_GITLAB);
+            $this->setCIPlatform($ci_platforms_class::CI_PLATFORM_GITLAB);
             return true;
         }
 
@@ -101,7 +193,8 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     public function setCIPlatform($platform)
     {
-        if (!ProjectCIPlatforms::isValidValue($platform, true)) {
+        $ci_platforms_class = $this->getCIPlatformsClass();
+        if (!$ci_platforms_class::isValidValue($platform, true)) {
             return false;
         }
         $this->ciPlatform = $platform;
@@ -125,21 +218,22 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     protected function determineHostingPlatform()
     {
+        $hosting_platforms_class = $this->getHostingPlatformsClass();
         // Check for PROJECT_HOSTING_PLATFORM override first.
         if ($hosting_platform = getenv(self::PROJECT_HOSTING_PLATFORM_ENV_OVERRIDE)) {
-            if (ProjectHostingPlatforms::isValidValue($hosting_platform, true)) {
+            if ($hosting_platforms_class::isValidValue($hosting_platform, true)) {
                 $this->setHostingPlatform($hosting_platform);
                 return true;
             }
         }
 
         if (getenv('PANTHEON_ENVIRONMENT') !== false) {
-            $this->setHostingPlatform(ProjectHostingPlatforms::HOSTING_PLATFORM_PANTHEON);
+            $this->setHostingPlatform($hosting_platforms_class::HOSTING_PLATFORM_PANTHEON);
             return true;
         }
 
         if (getenv('AH_SITE_ENVIRONMENT') !== false) {
-            $this->setHostingPlatform(ProjectHostingPlatforms::HOSTING_PLATFORM_ACQUIA);
+            $this->setHostingPlatform($hosting_platforms_class::HOSTING_PLATFORM_ACQUIA);
             return true;
         }
 
@@ -157,7 +251,8 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     public function setHostingPlatform($platform)
     {
-        if (!ProjectHostingPlatforms::isValidValue($platform, true)) {
+        $hosting_platforms_class = $this->getHostingPlatformsClass();
+        if (!$hosting_platforms_class::isValidValue($platform, true)) {
             return false;
         }
         $this->hostingPlatform = $platform;
@@ -182,9 +277,12 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     protected function determineEnvironmentType()
     {
+        $env_types_class = $this->getEnvironmentTypesClass();
+        $hosting_platforms_class = $this->getHostingPlatformsClass();
+
         // Check for SERVER_ENVIRONMENT override first.
         if ($server_env = getenv(self::PROJECT_ENVIRONMENT_TYPE_ENV_OVERRIDE)) {
-            if (ProjectEnvironmentTypes::isValidValue($server_env, true)) {
+            if ($env_types_class::isValidValue($server_env, true)) {
                 $this->setEnvironmentType($server_env);
                 return true;
             }
@@ -192,30 +290,30 @@ class ProjectSettings implements ProjectSettingsInterface
 
         // Detection of a CI platform automatically sets env type to CI.
         if (!empty($this->getCIPlatform())) {
-            $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_CI);
+            $this->setEnvironmentType($env_types_class::ENV_TYPE_CI);
             return true;
         }
 
         switch ($this->getHostingPlatform()) {
-            case ProjectHostingPlatforms::HOSTING_PLATFORM_PANTHEON:
+            case $hosting_platforms_class::HOSTING_PLATFORM_PANTHEON:
                 switch (getenv('PANTHEON_ENVIRONMENT')) {
                     case 'dev':
-                        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_DEV);
+                        $this->setEnvironmentType($env_types_class::ENV_TYPE_DEV);
                         return true;
 
                     case 'test':
-                        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_TEST);
+                        $this->setEnvironmentType($env_types_class::ENV_TYPE_TEST);
                         return true;
 
                     case 'live':
-                        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_PROD);
+                        $this->setEnvironmentType($env_types_class::ENV_TYPE_PROD);
                         return true;
                 }
                 break;
         }
 
         // Set to Local by default.
-        $this->setEnvironmentType(ProjectEnvironmentTypes::ENV_TYPE_LOCAL);
+        $this->setEnvironmentType($env_types_class::ENV_TYPE_LOCAL);
         return false;
     }
 
@@ -230,7 +328,8 @@ class ProjectSettings implements ProjectSettingsInterface
      */
     public function setEnvironmentType($env_type)
     {
-        if (!ProjectEnvironmentTypes::isValidValue($env_type, true)) {
+        $env_types_class = $this->getEnvironmentTypesClass();
+        if (!$env_types_class::isValidValue($env_type, true)) {
             return false;
         }
         $this->environmentType = $env_type;
@@ -304,9 +403,15 @@ class ProjectSettings implements ProjectSettingsInterface
                 }
             }
         }
+    }
 
-        // Add SecretsManager Class Overrides
-        $settings_file_pattern = $this->settings_root_dir . "/secrets/*.php";
+    /**
+     * Loads custom class overrides from environment src folder.
+     */
+    protected function loadCustomClasses()
+    {
+        // Add Class Overrides
+        $settings_file_pattern = $this->settings_root_dir . "/src/*.php";
         if ($project_settings_files = glob($settings_file_pattern)) {
             foreach ($project_settings_files as $project_settings_file) {
                 require_once($project_settings_file);

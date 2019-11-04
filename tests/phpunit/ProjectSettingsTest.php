@@ -2,7 +2,6 @@
 
 namespace CivicActions\ProjectSettings\Tests\Command;
 
-use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
 use CivicActions\ProjectSettings\ProjectSettings;
 use CivicActions\ProjectSettings\SampleSecretsManager;
 use CivicActions\ProjectSettings\SecretsProviders\SecretsProviderAbstract;
@@ -37,10 +36,12 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     public function testDefaultEnvironmentType()
     {
         $env_type = $this->projectSettings->getEnvironmentType();
+        $env_class = $this->projectSettings->getEnvironmentTypesClass();
+
         if ($this->projectSettings->detectedEnvironmentType()) {
-            $this->assertEquals(ProjectEnvironmentTypes::ENV_TYPE_CI, $env_type);
+            $this->assertEquals($env_class::ENV_TYPE_CI, $env_type);
         } else {
-            $this->assertEquals(ProjectEnvironmentTypes::ENV_TYPE_LOCAL, $env_type);
+            $this->assertEquals($env_class::ENV_TYPE_LOCAL, $env_type);
         }
     }
 

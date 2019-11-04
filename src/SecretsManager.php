@@ -2,7 +2,6 @@
 
 namespace CivicActions\ProjectSettings;
 
-use CivicActions\ProjectSettings\Constants\ProjectEnvironmentTypes;
 use CivicActions\ProjectSettings\SecretsProviders\EnvSecretsProvider;
 
 /**
