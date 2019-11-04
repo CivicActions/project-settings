@@ -5,11 +5,11 @@ namespace CivicActions\ProjectSettings\Utility;
 use ReflectionClass;
 
 /**
- * Class BasicEnum
+ * Class BasicEnumTrait
  *
  * Provides constants validation for name/values.
  */
-abstract class BasicEnum
+trait BasicEnumTrait
 {
     private static $constCacheArray = null;
 
@@ -72,7 +72,7 @@ abstract class BasicEnum
         try {
             $values = array_values(self::getConstants());
         } catch (\ReflectionException $e) {
-            print "BasicEnum::isValidValue() error: " . $e->getMessage();
+            print "BasicEnumTrait::isValidValue() error: " . $e->getMessage();
         }
         return in_array($value, $values, $strict);
     }

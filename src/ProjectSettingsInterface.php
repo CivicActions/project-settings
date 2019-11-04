@@ -5,6 +5,45 @@ namespace CivicActions\ProjectSettings;
 interface ProjectSettingsInterface
 {
     /**
+     * Get Environment Type Class.
+     * @return string
+     */
+    public function getEnvironmentTypesClass();
+
+    /**
+     * Set Environment Type Class.
+     * @param string $environmentTypesClass
+     * @throws \Exception
+     */
+    public function setEnvironmentTypesClass($environmentTypesClass);
+
+    /**
+     * Get Hosting Platforms Class.
+     * @return string
+     */
+    public function getHostingPlatformsClass();
+
+    /**
+     * Set Hosting Platforms Class.
+     * @param string $hostingPlatformsClass
+     * @throws \Exception
+     */
+    public function setHostingPlatformsClass($hostingPlatformsClass);
+
+    /**
+     * Get CI Platforms Class.
+     * @return string
+     */
+    public function getCIPlatformsClass();
+
+    /**
+     * Set CI Platforms Class.
+     * @param string $ciPlatformsClass
+     * @throws \Exception
+     */
+    public function setCIPlatformsClass($ciPlatformsClass);
+
+    /**
      * Set CI Platform.
      *
      * @param mixed $platform
