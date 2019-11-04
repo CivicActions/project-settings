@@ -3,14 +3,14 @@
 namespace CivicActions\ProjectSettings\Constants;
 
 use CivicActions\ProjectSettings\Utility\BasicEnumTrait;
-use CivicActions\ProjectSettings\Utility\BasicEnumTraitInterface;
+use CivicActions\ProjectSettings\Utility\BasicEnumInterface;
 
 /**
  * Class ProjectHostingPlatforms
  *
  * Available Hosting Platform constants.
  */
-abstract class ProjectHostingPlatforms implements BasicEnumTraitInterface
+abstract class ProjectHostingPlatforms implements BasicEnumInterface
 {
     use BasicEnumTrait;
 

@@ -7,7 +7,7 @@ namespace CivicActions\ProjectSettings\Utility;
  *
  * Provides constants validation for name/values.
  */
-interface BasicEnumTraitInterface
+interface BasicEnumInterface
 {
     /**
      * Check if name is valid.
