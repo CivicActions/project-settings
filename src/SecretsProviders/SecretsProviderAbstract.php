@@ -92,7 +92,7 @@ abstract class SecretsProviderAbstract
         foreach ($bundles as $bundle) {
             try {
                 $secret_value = $this->getSecretValue($bundle, true);
-                $secret_decoded = json_decode($secret_value, true);
+                $secret_decoded = json_decode($secret_value ?? '', true);
                 // Export bundle as well as individual values.
                 $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($bundle);
                 // Escape bash
