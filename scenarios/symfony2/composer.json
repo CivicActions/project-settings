@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=5.6",
+    "php": ">=8.0",
     "aws/aws-sdk-php": "^3.90",
     "composer/installers": "^1.2",
     "ulrichsg/getopt-php": "^3.0"
@@ -45,14 +45,17 @@
     "scenario": "scenarios/install",
     "post-update-cmd": [
       "create-scenario symfony4 'symfony/console:^4.0'",
-      "create-scenario symfony2 'symfony/console:^2.8' --platform-php '5.6' --no-lockfile"
+      "create-scenario symfony2 'symfony/console:^2.8' --platform-php '8.1.22' --no-lockfile"
     ]
   },
   "config": {
     "optimize-autoloader": true,
     "sort-packages": true,
     "platform": {
-      "php": "5.6"
+      "php": "8.1.22"
+    },
+    "allow-plugins": {
+      "composer/installers": true
     },
     "vendor-dir": "../../vendor"
   },

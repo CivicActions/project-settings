@@ -73,7 +73,7 @@ abstract class SecretsProviderAbstract
         foreach ($secret_definitions as $key => $secret_def) {
             if (!isset($secret_def['bundle'])) {
                 if (!isset($secret_def['secrets_provider_class']) ||
-                    (isset($secret_def['secrets_provider_class']) && $secret_def['secrets_provider_class'] != 'EnvSecretsProvider')) {
+                    (isset($secret_def['secrets_provider_class']) && $secret_def['secrets_provider_class'] !== 'EnvSecretsProvider')) {
                     try {
                         $secret_value = $this->getSecretValue($key);
                         $secret_path = $this->secretsManager->getSecretsProvider('EnvSecretsProvider')->getSecretPath($key);
@@ -113,7 +113,7 @@ abstract class SecretsProviderAbstract
                 }
             } catch (\Exception $e) {
                 // @todo Does not throw any errors so it doesn't corrupt export output.
-                fwrite(STDERR, $e->getMessage() . "\nSecret: {$secret_name}\n");
+                fwrite(STDERR, $e->getMessage() . "\nSecret: {$bundle}\n");
             }
         }
         return $output;
@@ -127,7 +127,9 @@ abstract class SecretsProviderAbstract
      */
     public static function escapeVar($var)
     {
-        $var = str_replace("'", "'\\''", $var);
-        return $var;
+        if (empty($var)) {
+          return NULL;
+        }
+        return str_replace("'", "'\\''", $var);
     }
 }
