@@ -5,8 +5,9 @@ namespace CivicActions\ProjectSettings\Tests\Command;
 use CivicActions\ProjectSettings\ProjectSettings;
 use CivicActions\ProjectSettings\SampleSecretsManager;
 use CivicActions\ProjectSettings\SecretsProviders\SecretsProviderAbstract;
+use PHPUnit\Framework\TestCase;
 
-class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
+class ProjectSettingsTest extends TestCase
 {
 
     /** @var ProjectSettings */
@@ -18,7 +19,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->projectSettings = new ProjectSettings('environments');
@@ -33,7 +34,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests that default environment type is local.
      */
-    public function testDefaultEnvironmentType()
+    public function testDefaultEnvironmentType(): void
     {
         $env_type = $this->projectSettings->getEnvironmentType();
         $env_class = $this->projectSettings->getEnvironmentTypesClass();
@@ -48,7 +49,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests secrets manager.
      */
-    public function testSecretManager()
+    public function testSecretManager(): void
     {
         $project_prefix = $this->secretsManager->getSecretsProvider()->getProjectPrefix();
 
@@ -107,7 +108,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     /**
      * Test Env Export Escaping.
      */
-    public function testEnvExportEscape()
+    public function testEnvExportEscape(): void
     {
         // Generate a shell export line for ascii char set.
         $ascii_string = self::generateAsciiChars();
@@ -123,7 +124,7 @@ class ProjectSettingsTest extends \PHPUnit_Framework_TestCase
     /**
      * Generate ASCII Chars for testing.
      */
-    private static function generateAsciiChars()
+    private static function generateAsciiChars(): string
     {
         $output = '';
         for ($i = 32; $i < 127; $i++) {

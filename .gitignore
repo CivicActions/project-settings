@@ -16,3 +16,5 @@ environments/qa/settings.*.php
 # Build
 /build/
 .idea
+
+.phpunit.result.cache
