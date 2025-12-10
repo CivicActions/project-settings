@@ -7,6 +7,9 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
   pull_request:
+    branches:
+      - main # Or other target branches
+    types: [opened, synchronize, reopened] # Triggers on PR open, updates, and reopen
 
 jobs:
   test:
@@ -19,6 +22,8 @@ jobs:
       HIGHEST_LOWEST: update
     steps:
       - uses: actions/checkout@v4
+      - name: Install Xdebug
+        run: sudo apt-get update && sudo apt-get install -y php-xdebug
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -41,7 +46,10 @@ jobs:
 
       - name: Run tests
         run: composer test
-
-      - name: Upload coverage to Coveralls
+        
+      - name: Coveralls
         if: success()
-        run: php vendor/bin/coveralls -v
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage/clover.xml # Path to your generated Clover XML report

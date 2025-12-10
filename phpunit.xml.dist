@@ -6,7 +6,7 @@
       <directory suffix=".php">src</directory>
     </include>
     <report>
-      <clover outputFile="build/logs/clover.xml"/>
+      <clover outputFile="coverage/clover.xml"/>
     </report>
   </coverage>
   <testsuites>
@@ -14,5 +14,4 @@
       <directory>tests/phpunit</directory>
     </testsuite>
   </testsuites>
-  <logging/>
 </phpunit>
