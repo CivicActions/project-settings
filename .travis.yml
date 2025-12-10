@@ -9,14 +9,12 @@ branches:
 matrix:
   fast_finish: true
   include:
-    - php: 7.3
-      env: 'SCENARIO=symfony4 HIGHEST_LOWEST="update"'
-    - php: 7.2
-      env: 'SCENARIO=symfony4 HIGHEST_LOWEST="update"'
-    - php: 7.1
-      env: 'SCENARIO=symfony4'
-    - php: 5.6
-      env: 'SCENARIO=symfony2 HIGHEST_LOWEST="update --prefer-lowest'
+    - php: 8.3
+      env: 'SCENARIO=symfony6 HIGHEST_LOWEST="update"'
+    - php: 8.2
+      env: 'SCENARIO=symfony6 HIGHEST_LOWEST="update"'
+    - php: 8.1
+      env: 'SCENARIO=symfony6 HIGHEST_LOWEST="update"'
 
 sudo: false
 
