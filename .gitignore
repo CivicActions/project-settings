@@ -18,3 +18,4 @@ environments/qa/settings.*.php
 .idea
 
 .phpunit.result.cache
+coverage
