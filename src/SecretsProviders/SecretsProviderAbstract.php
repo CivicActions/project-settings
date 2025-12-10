@@ -128,7 +128,7 @@ abstract class SecretsProviderAbstract
     public static function escapeVar($var)
     {
         if (empty($var)) {
-          return NULL;
+            return null;
         }
         return str_replace("'", "'\\''", $var);
     }
