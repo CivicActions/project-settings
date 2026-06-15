@@ -33,7 +33,7 @@
   "scripts": {
     "cs": "phpcs -n --standard=PSR2 src tests environments --exclude=Generic.Files.LineLength",
     "cbf": "phpcbf -n --standard=PSR2 src tests environments --exclude=Generic.Files.LineLength",
-    "unit": "phpunit --coverage-clover logs/clover.xml",
+    "unit": "XDEBUG_MODE=coverage phpunit --coverage-clover coverage/clover.xml",
     "lint": [
       "find src -name '*.php' -print0 | xargs -0 -n1 php -l",
       "find tests -name '*.php' -print0 | xargs -0 -n1 php -l",

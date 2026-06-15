@@ -19,3 +19,4 @@ environments/qa/settings.*.php
 
 .phpunit.result.cache
 coverage
+composer.lock
