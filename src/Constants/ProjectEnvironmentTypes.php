@@ -19,6 +19,7 @@ abstract class ProjectEnvironmentTypes implements BasicEnumInterface
     const ENV_TYPE_QA = 'qa';
     const ENV_TYPE_DEV = 'dev';
     const ENV_TYPE_TEST = 'test';
+    const ENV_TYPE_TEST2 = 'test2';
     const ENV_TYPE_STAGE = 'stage';
     const ENV_TYPE_PROD = 'prod';
 }
